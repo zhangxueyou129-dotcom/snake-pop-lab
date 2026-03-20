@@ -923,7 +923,8 @@
 
     const audioState = {
       context: null,
-      enabled: true
+      enabled: true,
+      unlocked: false
     };
 
     function getAudioContext() {
@@ -942,6 +943,20 @@
       return audioState.context;
     }
 
+    function unlockAudio() {
+      const ctxAudio = getAudioContext();
+      if (!ctxAudio) return Promise.resolve(false);
+      if (audioState.unlocked && ctxAudio.state === "running") {
+        return Promise.resolve(true);
+      }
+      return ctxAudio.resume()
+        .then(() => {
+          audioState.unlocked = true;
+          return true;
+        })
+        .catch(() => false);
+    }
+
     function playTone(options) {
       const ctxAudio = getAudioContext();
       if (!ctxAudio) return;
@@ -949,7 +964,7 @@
         frequency = 440,
         type = "sine",
         duration = 0.12,
-        volume = 0.03,
+        volume = 0.05,
         slideTo = null,
         delay = 0
       } = options;
@@ -972,32 +987,32 @@
     }
 
     function playStartSound() {
-      playTone({ frequency: 392, type: "triangle", duration: 0.12, volume: 0.035 });
-      playTone({ frequency: 523.25, type: "triangle", duration: 0.16, volume: 0.03, delay: 0.08 });
+      playTone({ frequency: 392, type: "triangle", duration: 0.12, volume: 0.06 });
+      playTone({ frequency: 523.25, type: "triangle", duration: 0.16, volume: 0.05, delay: 0.08 });
     }
 
     function playEatSound() {
-      playTone({ frequency: 540, type: "sine", duration: 0.08, volume: 0.03 });
-      playTone({ frequency: 760, type: "triangle", duration: 0.11, volume: 0.026, delay: 0.04 });
+      playTone({ frequency: 540, type: "sine", duration: 0.08, volume: 0.055 });
+      playTone({ frequency: 760, type: "triangle", duration: 0.11, volume: 0.045, delay: 0.04 });
     }
 
     function playPauseSound(isResuming) {
       if (isResuming) {
-        playTone({ frequency: 440, type: "square", duration: 0.08, volume: 0.02 });
-        playTone({ frequency: 660, type: "square", duration: 0.08, volume: 0.018, delay: 0.05 });
+        playTone({ frequency: 440, type: "square", duration: 0.08, volume: 0.04 });
+        playTone({ frequency: 660, type: "square", duration: 0.08, volume: 0.035, delay: 0.05 });
       } else {
-        playTone({ frequency: 420, type: "square", duration: 0.1, volume: 0.02, slideTo: 300 });
+        playTone({ frequency: 420, type: "square", duration: 0.1, volume: 0.04, slideTo: 300 });
       }
     }
 
     function playGameOverSound() {
-      playTone({ frequency: 360, type: "sawtooth", duration: 0.16, volume: 0.028, slideTo: 260 });
-      playTone({ frequency: 240, type: "triangle", duration: 0.24, volume: 0.024, delay: 0.08, slideTo: 150 });
+      playTone({ frequency: 360, type: "sawtooth", duration: 0.16, volume: 0.05, slideTo: 260 });
+      playTone({ frequency: 240, type: "triangle", duration: 0.24, volume: 0.045, delay: 0.08, slideTo: 150 });
     }
 
     function playShareSound() {
-      playTone({ frequency: 660, type: "triangle", duration: 0.08, volume: 0.022 });
-      playTone({ frequency: 880, type: "triangle", duration: 0.12, volume: 0.018, delay: 0.05 });
+      playTone({ frequency: 660, type: "triangle", duration: 0.08, volume: 0.04 });
+      playTone({ frequency: 880, type: "triangle", duration: 0.12, volume: 0.035, delay: 0.05 });
     }
 
     function resetGame() {
@@ -1377,6 +1392,7 @@
     }
 
     document.addEventListener("keydown", (event) => {
+      unlockAudio();
       const key = event.key.toLowerCase();
       if (key === " " || event.code === "Space") {
         event.preventDefault();
@@ -1391,10 +1407,25 @@
       }
     });
 
-    startBtn.addEventListener("click", startGame);
-    pauseBtn.addEventListener("click", togglePause);
-    restartBtn.addEventListener("click", resetGame);
-    dailyBtn.addEventListener("click", toggleChallenge);
+    document.addEventListener("pointerdown", unlockAudio, { passive: true });
+    document.addEventListener("touchstart", unlockAudio, { passive: true });
+
+    startBtn.addEventListener("click", () => {
+      unlockAudio();
+      startGame();
+    });
+    pauseBtn.addEventListener("click", () => {
+      unlockAudio();
+      togglePause();
+    });
+    restartBtn.addEventListener("click", () => {
+      unlockAudio();
+      resetGame();
+    });
+    dailyBtn.addEventListener("click", () => {
+      unlockAudio();
+      toggleChallenge();
+    });
     copyBtn.addEventListener("click", copyShareText);
     nativeShareBtn.addEventListener("click", nativeShare);
     posterBtn.addEventListener("click", downloadPoster);
