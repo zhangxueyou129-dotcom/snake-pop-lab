@@ -1575,15 +1575,6 @@
       horizon.addColorStop(1, "rgba(0,0,0,0.12)");
       ctx.fillStyle = horizon;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      ctx.fillStyle = "rgba(255,255,255,0.018)";
-      ctx.beginPath();
-      ctx.moveTo(isoView.originX, 42);
-      ctx.lineTo(canvas.width - 40, isoView.originY + tileCount * 7);
-      ctx.lineTo(isoView.originX, canvas.height - 34);
-      ctx.lineTo(40, isoView.originY + tileCount * 7);
-      ctx.closePath();
-      ctx.fill();
     }
 
     function draw() {
