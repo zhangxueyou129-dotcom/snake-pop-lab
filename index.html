@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Snake Pop Lab</title>
+  <style>
+    :root {
+      --line: rgba(255, 255, 255, 0.09);
+      --text: #f4f7ff;
+      --muted: rgba(244, 247, 255, 0.68);
+      --brand: #4de2c5;
+      --brand-2: #ffd166;
+      --shadow: 0 30px 70px rgba(0, 0, 0, 0.28);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+    }
+
+    body {
+      font-family: "Trebuchet MS", "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(77, 226, 197, 0.16), transparent 28%),
+        radial-gradient(circle at 85% 15%, rgba(255, 93, 143, 0.14), transparent 24%),
+        radial-gradient(circle at bottom right, rgba(255, 209, 102, 0.12), transparent 30%),
+        linear-gradient(135deg, #09101d, #141f35 55%, #1d2840);
+      padding: 22px;
+      overflow-x: hidden;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      width: 38vmax;
+      height: 38vmax;
+      border-radius: 50%;
+      filter: blur(60px);
+      pointer-events: none;
+      opacity: 0.35;
+      z-index: 0;
+    }
+
+    body::before {
+      top: -12vmax;
+      left: -10vmax;
+      background: rgba(77, 226, 197, 0.18);
+      animation: drift 12s ease-in-out infinite alternate;
+    }
+
+    body::after {
+      right: -8vmax;
+      bottom: -12vmax;
+      background: rgba(255, 93, 143, 0.15);
+      animation: drift 15s ease-in-out infinite alternate-reverse;
+    }
+
+    @keyframes drift {
+      from {
+        transform: translate3d(0, 0, 0) scale(1);
+      }
+      to {
+        transform: translate3d(2vmax, 1.5vmax, 0) scale(1.08);
+      }
+    }
+
+    .app {
+      position: relative;
+      z-index: 1;
+      width: min(1220px, 100%);
+      margin: 0 auto;
+      display: grid;
+      gap: 18px;
+    }
+
+    .hero,
+    .board-card,
+    .side-card,
+    .share-card {
+      border: 1px solid var(--line);
+      background: rgba(10, 16, 31, 0.68);
+      backdrop-filter: blur(18px);
+      box-shadow: var(--shadow);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 18px;
+      border-radius: 28px;
+      padding: 24px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--brand);
+      background: rgba(77, 226, 197, 0.1);
+      border: 1px solid rgba(77, 226, 197, 0.18);
+      border-radius: 999px;
+      padding: 8px 12px;
+    }
+
+    .hero h1 {
+      margin: 14px 0 10px;
+      font-size: clamp(42px, 8vw, 76px);
+      line-height: 0.95;
+      letter-spacing: -0.04em;
+    }
+
+    .hero p {
+      margin: 0;
+      max-width: 560px;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 16px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .hero-stat,
+    .mini-card {
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.04);
+      padding: 16px;
+    }
+
+    .hero-stat strong {
+      display: block;
+      font-size: 26px;
+      margin-bottom: 4px;
+    }
+
+    .hero-stat span,
+    .mini-card p,
+    .mini-card span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .promo-stack {
+      display: grid;
+      gap: 12px;
+      align-content: center;
+    }
+
+    .promo-card {
+      border-radius: 24px;
+      padding: 18px;
+      background:
+        linear-gradient(145deg, rgba(77, 226, 197, 0.12), rgba(255, 93, 143, 0.08)),
+        rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .promo-card h2,
+    .panel-title {
+      margin: 0 0 10px;
+      font-size: 18px;
+    }
+
+    .promo-card p {
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag {
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      color: #fff;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 340px;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .board-card {
+      border-radius: 30px;
+      padding: 20px;
+    }
+
+    .board-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .board-meta h2 {
+      margin: 0;
+      font-size: 26px;
+    }
+
+    .board-meta p {
+      margin: 8px 0 0;
+      color: var(--muted);
+    }
+
+    .stats {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .stat {
+      min-width: 92px;
+      padding: 11px 14px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      text-align: center;
+    }
+
+    .stat-label {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .stat-value {
+      display: block;
+      font-size: 27px;
+      font-weight: 700;
+    }
+
+    .canvas-wrap {
+      position: relative;
+      aspect-ratio: 1 / 1;
+      width: 100%;
+      border-radius: 28px;
+      overflow: hidden;
+      background:
+        linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(22, 31, 52, 0.9), rgba(10, 16, 30, 0.96));
+      background-size: 5% 5%, 5% 5%, 100% 100%;
+      isolation: isolate;
+    }
+
+    .canvas-wrap::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 25% 15%, rgba(77, 226, 197, 0.16), transparent 22%),
+        radial-gradient(circle at 78% 20%, rgba(255, 209, 102, 0.14), transparent 18%),
+        radial-gradient(circle at 50% 80%, rgba(255, 93, 143, 0.12), transparent 22%);
+      mix-blend-mode: screen;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    canvas {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .flash {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      opacity: 0;
+      background: radial-gradient(circle, rgba(255, 209, 102, 0.34), transparent 54%);
+      transition: opacity 220ms ease;
+    }
+
+    .flash.active {
+      opacity: 1;
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      text-align: center;
+      background: rgba(2, 6, 14, 0.24);
+      z-index: 3;
+      transition: opacity 180ms ease;
+    }
+
+    .overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .overlay-card {
+      width: min(100%, 370px);
+      padding: 24px;
+      border-radius: 24px;
+      background: rgba(12, 18, 32, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      box-shadow: 0 16px 45px rgba(0, 0, 0, 0.32);
+    }
+
+    .overlay-card h3 {
+      margin: 0 0 10px;
+      font-size: 30px;
+    }
+
+    .overlay-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .pulse-badge {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      z-index: 4;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255, 93, 143, 0.18);
+      color: #ffd5e4;
+      border: 1px solid rgba(255, 93, 143, 0.22);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0;
+      transform: translateY(-8px);
+      transition: opacity 220ms ease, transform 220ms ease;
+    }
+
+    .pulse-badge.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .side-card,
+    .share-card {
+      border-radius: 28px;
+      padding: 18px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .panel {
+      padding: 16px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .panel p,
+    .panel li,
+    .share-note {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 14px;
+    }
+
+    .panel ul {
+      margin: 0;
+      padding-left: 18px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .actions,
+    .share-actions {
+      display: grid;
+      gap: 10px;
+    }
+
+    button,
+    .link-button {
+      appearance: none;
+      width: 100%;
+      border: 0;
+      border-radius: 16px;
+      padding: 13px 14px;
+      color: #fff;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      text-align: center;
+      transition: transform 140ms ease, opacity 140ms ease, background 140ms ease, border-color 140ms ease;
+    }
+
+    button:hover,
+    .link-button:hover {
+      transform: translateY(-1px);
+    }
+
+    button:active,
+    .link-button:active {
+      transform: translateY(1px);
+    }
+
+    .primary {
+      background: linear-gradient(135deg, #4de2c5, #2bb6d6);
+      color: #071019;
+    }
+
+    .secondary {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+    }
+
+    .danger {
+      background: linear-gradient(135deg, rgba(255, 93, 143, 0.95), rgba(255, 120, 98, 0.95));
+    }
+
+    .special {
+      background: linear-gradient(135deg, rgba(255, 209, 102, 0.95), rgba(255, 93, 143, 0.95));
+    }
+
+    .pad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .pad button {
+      aspect-ratio: 1 / 1;
+      padding: 0;
+      font-size: 22px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .pad .blank {
+      visibility: hidden;
+    }
+
+    .mission-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .mission {
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .mission strong {
+      display: block;
+      font-size: 15px;
+      margin-bottom: 6px;
+    }
+
+    .mission.done {
+      border-color: rgba(121, 242, 163, 0.45);
+      background: rgba(121, 242, 163, 0.08);
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 112px;
+      resize: vertical;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
+      padding: 14px;
+      background: rgba(2, 8, 19, 0.42);
+      color: var(--text);
+      font: inherit;
+      line-height: 1.6;
+    }
+
+    .social-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .social-grid .link-button {
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 13px;
+      padding: 12px 10px;
+    }
+
+    .share-preview {
+      width: 100%;
+      aspect-ratio: 4 / 5;
+      border-radius: 24px;
+      background:
+        radial-gradient(circle at top, rgba(77, 226, 197, 0.2), transparent 34%),
+        linear-gradient(165deg, #0c1730, #101e3d 56%, #241735);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 18px;
+      display: grid;
+      align-content: space-between;
+      gap: 14px;
+    }
+
+    .share-preview h3,
+    .share-preview p {
+      margin: 0;
+    }
+
+    .share-preview h3 {
+      font-size: 28px;
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+
+    .poster-score {
+      font-size: 64px;
+      font-weight: 800;
+      line-height: 1;
+      color: var(--brand-2);
+    }
+
+    .poster-meta {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .poster-pill {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .footer-tip {
+      font-size: 12px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      body {
+        padding: 14px;
+      }
+
+      .hero {
+        padding: 18px;
+      }
+
+      .hero-grid,
+      .mission-grid,
+      .social-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .board-card,
+      .side-card,
+      .share-card {
+        padding: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="hero">
+      <div>
+        <div class="eyebrow">Arcade Promo Ready</div>
+        <h1>Snake Pop Lab</h1>
+        <p>把经典贪食蛇升级成更有表演感的小作品。节奏会越来越快，连吃会触发热度状态，右侧还能直接生成战绩文案和分享海报，方便你做传播和活动预热。</p>
+        <div class="hero-grid">
+          <div class="hero-stat"><strong id="heroBest">0</strong><span>历史最高分</span></div>
+          <div class="hero-stat"><strong id="heroCombo">0x</strong><span>当前连吃</span></div>
+          <div class="hero-stat"><strong id="heroMode">Chill</strong><span>热度状态</span></div>
+        </div>
+      </div>
+      <div class="promo-stack">
+        <div class="promo-card">
+          <h2>这版更适合传播</h2>
+          <p>内置战绩文案、海报导出、原生分享调用和社媒跳转入口，适合作为活动页或小游戏落地页原型。</p>
+          <div class="tag-row">
+            <span class="tag">动态背景</span>
+            <span class="tag">连击反馈</span>
+            <span class="tag">海报导出</span>
+            <span class="tag">分享文案</span>
+          </div>
+        </div>
+        <div class="mini-card">
+          <strong>推广提示</strong>
+          <p>抖音和 Instagram 不能只靠前端网页真正一键发帖，但可以通过原生分享、复制文案、下载海报和快捷跳转，极大缩短发布动作。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="main-grid">
+      <section class="board-card">
+        <div class="board-top">
+          <div class="board-meta">
+            <h2>极光赛道</h2>
+            <p>吃到星果提升速度，保持连击来点亮全场。</p>
+          </div>
+          <div class="stats">
+            <div class="stat"><span class="stat-label">分数</span><span id="score" class="stat-value">0</span></div>
+            <div class="stat"><span class="stat-label">最高分</span><span id="best" class="stat-value">0</span></div>
+            <div class="stat"><span class="stat-label">连击</span><span id="combo" class="stat-value">0</span></div>
+          </div>
+        </div>
+        <div class="canvas-wrap">
+          <div id="heatBadge" class="pulse-badge">Heat Up</div>
+          <div id="flash" class="flash"></div>
+          <canvas id="game" width="640" height="640" aria-label="贪食蛇游戏画布"></canvas>
+          <div id="overlay" class="overlay">
+            <div class="overlay-card">
+              <h3 id="overlay-title">准备开秀</h3>
+              <p id="overlay-text">按方向键、W A S D 或点击开始按钮，让小蛇开启冲分表演。</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="side-card">
+        <section class="panel">
+          <h3 class="panel-title">操作台</h3>
+          <div class="actions">
+            <button id="startBtn" class="primary">开始游戏</button>
+            <button id="pauseBtn" class="secondary">暂停 / 继续</button>
+            <button id="restartBtn" class="danger">重新开始</button>
+            <button id="dailyBtn" class="special">挑战模式</button>
+          </div>
+        </section>
+        <section class="panel">
+          <h3 class="panel-title">方向控制</h3>
+          <div class="pad" aria-label="方向控制">
+            <button class="blank" tabindex="-1">.</button>
+            <button data-dir="up" aria-label="向上">↑</button>
+            <button class="blank" tabindex="-1">.</button>
+            <button data-dir="left" aria-label="向左">←</button>
+            <button data-dir="down" aria-label="向下">↓</button>
+            <button data-dir="right" aria-label="向右">→</button>
+          </div>
+        </section>
+        <section class="panel">
+          <h3 class="panel-title">趣味任务</h3>
+          <div class="mission-grid">
+            <div id="mission5" class="mission"><strong>5 分热身</strong><span>先稳稳吃到 5 分。</span></div>
+            <div id="mission10" class="mission"><strong>10 分上头</strong><span>连续冲进两位数。</span></div>
+            <div id="missionCombo" class="mission"><strong>3 连击</strong><span>快速吃到 3 次星果。</span></div>
+            <div id="missionBest" class="mission"><strong>破纪录</strong><span>刷新你的历史最好成绩。</span></div>
+          </div>
+        </section>
+        <section class="panel">
+          <h3 class="panel-title">玩法亮点</h3>
+          <ul>
+            <li>连续进食会进入热度状态，画面和文案都会变得更燃。</li>
+            <li>分数越高，蛇速越快，更适合录屏挑战和 PK。</li>
+            <li>支持空格暂停，适合边玩边截图。</li>
+          </ul>
+        </section>
+      </aside>
+    </section>
+
+    <section class="share-card">
+      <div class="board-top">
+        <div class="board-meta">
+          <h2>传播工具箱</h2>
+          <p>先把素材准备好，再去抖音、Instagram、X 或朋友圈发布会顺手很多。</p>
+        </div>
+      </div>
+      <div class="main-grid">
+        <section class="panel">
+          <h3 class="panel-title">推荐文案</h3>
+          <textarea id="shareText" spellcheck="false"></textarea>
+          <div class="share-actions">
+            <button id="copyBtn" class="primary">复制战绩文案</button>
+            <button id="nativeShareBtn" class="secondary">调用系统分享</button>
+            <button id="posterBtn" class="special">下载分享海报</button>
+          </div>
+          <p id="shareStatus" class="share-note">当前会根据分数、最高分和连击自动生成文案。</p>
+        </section>
+        <section class="panel">
+          <h3 class="panel-title">社媒快捷入口</h3>
+          <div class="social-grid">
+            <a id="douyinLink" class="link-button" href="https://www.douyin.com/" target="_blank" rel="noreferrer">打开抖音</a>
+            <a id="insLink" class="link-button" href="https://www.instagram.com/" target="_blank" rel="noreferrer">打开 Ins</a>
+            <a id="xLink" class="link-button" href="https://twitter.com/intent/tweet" target="_blank" rel="noreferrer">打开 X</a>
+          </div>
+          <p class="share-note">网页前端没法直接替你完成抖音或 Instagram 的正式发帖鉴权流程，所以这里采用更现实的推广流：复制文案、下载海报、快捷打开平台。</p>
+        </section>
+        <section class="panel">
+          <h3 class="panel-title">海报预览</h3>
+          <div class="share-preview">
+            <div>
+              <div class="eyebrow">Snake Pop Lab</div>
+              <h3>今晚谁来破纪录</h3>
+            </div>
+            <div>
+              <p class="poster-score" id="posterScore">0</p>
+              <div class="poster-meta">
+                <span class="poster-pill">最高分 <span id="posterBest">0</span></span>
+                <span class="poster-pill">连击 <span id="posterCombo">0</span></span>
+                <span class="poster-pill" id="posterMood">状态 Chill</span>
+              </div>
+            </div>
+            <div><p id="posterCopy">刚刚在 Snake Pop Lab 冲到 0 分，谁来接招？</p></div>
+          </div>
+        </section>
+      </div>
+      <p class="footer-tip">如果后续你要真正接入企业自有分享链路，可以把按钮绑定到你们的 App Scheme、落地页参数或后端发布接口。</p>
+    </section>
+  </main>
+  <script>
+    const canvas = document.getElementById("game");
+    const ctx = canvas.getContext("2d");
+    const overlay = document.getElementById("overlay");
+    const overlayTitle = document.getElementById("overlay-title");
+    const overlayText = document.getElementById("overlay-text");
+    const flash = document.getElementById("flash");
+    const heatBadge = document.getElementById("heatBadge");
+    const scoreEl = document.getElementById("score");
+    const bestEl = document.getElementById("best");
+    const comboEl = document.getElementById("combo");
+    const heroBestEl = document.getElementById("heroBest");
+    const heroComboEl = document.getElementById("heroCombo");
+    const heroModeEl = document.getElementById("heroMode");
+    const startBtn = document.getElementById("startBtn");
+    const pauseBtn = document.getElementById("pauseBtn");
+    const restartBtn = document.getElementById("restartBtn");
+    const dailyBtn = document.getElementById("dailyBtn");
+    const padButtons = document.querySelectorAll(".pad button[data-dir]");
+    const mission5 = document.getElementById("mission5");
+    const mission10 = document.getElementById("mission10");
+    const missionCombo = document.getElementById("missionCombo");
+    const missionBest = document.getElementById("missionBest");
+    const shareText = document.getElementById("shareText");
+    const shareStatus = document.getElementById("shareStatus");
+    const copyBtn = document.getElementById("copyBtn");
+    const nativeShareBtn = document.getElementById("nativeShareBtn");
+    const posterBtn = document.getElementById("posterBtn");
+    const douyinLink = document.getElementById("douyinLink");
+    const insLink = document.getElementById("insLink");
+    const xLink = document.getElementById("xLink");
+    const posterScore = document.getElementById("posterScore");
+    const posterBest = document.getElementById("posterBest");
+    const posterCombo = document.getElementById("posterCombo");
+    const posterMood = document.getElementById("posterMood");
+    const posterCopy = document.getElementById("posterCopy");
+    const gridSize = 20;
+    const tileCount = canvas.width / gridSize;
+    const bestKey = "snake-pop-best";
+    const challengeKey = "snake-pop-challenge";
+
+    const state = {
+      snake: [],
+      direction: { x: 1, y: 0 },
+      nextDirection: { x: 1, y: 0 },
+      food: { x: 8, y: 8 },
+      score: 0,
+      best: Number(localStorage.getItem(bestKey) || 0),
+      running: false,
+      gameOver: false,
+      speed: 125,
+      lastTick: 0,
+      combo: 0,
+      comboTimer: 0,
+      particles: [],
+      challenge: localStorage.getItem(challengeKey) === "on",
+      heatLevel: "Chill",
+      hasBrokenBest: false
+    };
+
+    function resetGame() {
+      state.snake = [{ x: 7, y: 12 }, { x: 6, y: 12 }, { x: 5, y: 12 }, { x: 4, y: 12 }];
+      state.direction = { x: 1, y: 0 };
+      state.nextDirection = { x: 1, y: 0 };
+      state.score = 0;
+      state.combo = 0;
+      state.comboTimer = 0;
+      state.speed = state.challenge ? 96 : 125;
+      state.running = false;
+      state.gameOver = false;
+      state.lastTick = 0;
+      state.particles = [];
+      state.heatLevel = "Chill";
+      state.hasBrokenBest = false;
+      placeFood();
+      syncHud();
+      showOverlay(state.challenge ? "挑战模式已就绪" : "准备开秀", state.challenge ? "这一局初始速度更快，适合录屏挑战。准备好就开冲。" : "按方向键、W A S D 或点击开始按钮，让小蛇开启冲分表演。");
+      draw();
+    }
+
+    function placeFood() {
+      let next;
+      do {
+        next = { x: Math.floor(Math.random() * tileCount), y: Math.floor(Math.random() * tileCount) };
+      } while (state.snake.some((part) => part.x === next.x && part.y === next.y));
+      state.food = next;
+    }
+
+    function showOverlay(title, text) {
+      overlayTitle.textContent = title;
+      overlayText.textContent = text;
+      overlay.classList.remove("hidden");
+    }
+
+    function hideOverlay() {
+      overlay.classList.add("hidden");
+    }
+
+    function triggerFlash() {
+      flash.classList.add("active");
+      setTimeout(() => flash.classList.remove("active"), 120);
+    }
+
+    function updateHeat() {
+      if (state.combo >= 5 || state.score >= 15) {
+        state.heatLevel = "Blaze";
+      } else if (state.combo >= 3 || state.score >= 8) {
+        state.heatLevel = "Hype";
+      } else {
+        state.heatLevel = "Chill";
+      }
+      heatBadge.textContent = state.heatLevel === "Blaze" ? "Blaze Mode" : state.heatLevel === "Hype" ? "Hype Run" : "Heat Up";
+      heatBadge.classList.toggle("active", state.heatLevel !== "Chill");
+    }
+
+    function syncMissions() {
+      mission5.classList.toggle("done", state.score >= 5);
+      mission10.classList.toggle("done", state.score >= 10);
+      missionCombo.classList.toggle("done", state.combo >= 3);
+      missionBest.classList.toggle("done", state.hasBrokenBest);
+    }
+
+    function buildShareCopy() {
+      const openers = { Chill: "刚热身完毕", Hype: "已经有点上头了", Blaze: "直接冲进燃烧状态" };
+      return [`${openers[state.heatLevel]}，我在 Snake Pop Lab 拿下 ${state.score} 分。`, `最高分 ${state.best}，这局连吃 ${state.combo} 次，谁来挑战我？`, "#贪食蛇 #小游戏 #挑战赛 #SnakePopLab"].join("\n");
+    }
+
+    function syncShareLinks(copy) {
+      xLink.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(copy)}`;
+      douyinLink.href = "https://www.douyin.com/";
+      insLink.href = "https://www.instagram.com/";
+    }
+
+    function syncHud() {
+      updateHeat();
+      scoreEl.textContent = state.score;
+      bestEl.textContent = state.best;
+      comboEl.textContent = state.combo;
+      heroBestEl.textContent = state.best;
+      heroComboEl.textContent = `${state.combo}x`;
+      heroModeEl.textContent = state.heatLevel;
+      syncMissions();
+      const copy = buildShareCopy();
+      shareText.value = copy;
+      posterScore.textContent = state.score;
+      posterBest.textContent = state.best;
+      posterCombo.textContent = state.combo;
+      posterMood.textContent = `状态 ${state.heatLevel}`;
+      posterCopy.textContent = copy.split("\n")[0];
+      syncShareLinks(copy);
+    }
+
+    function spawnParticles(x, y) {
+      for (let i = 0; i < 10; i += 1) {
+        state.particles.push({ x, y, dx: (Math.random() - 0.5) * 4, dy: (Math.random() - 0.5) * 4, life: 24 + Math.random() * 16, size: 3 + Math.random() * 4 });
+      }
+    }
+
+    function setDirection(dir) {
+      const map = { up: { x: 0, y: -1 }, down: { x: 0, y: 1 }, left: { x: -1, y: 0 }, right: { x: 1, y: 0 } };
+      const next = map[dir];
+      if (!next) return;
+      const reverse = state.direction.x + next.x === 0 && state.direction.y + next.y === 0;
+      if (reverse && state.snake.length > 1) return;
+      state.nextDirection = next;
+      if (!state.running && !state.gameOver) startGame();
+    }
+
+    function startGame() {
+      if (state.gameOver) resetGame();
+      state.running = true;
+      hideOverlay();
+    }
+
+    function togglePause() {
+      if (state.gameOver) return;
+      state.running = !state.running;
+      if (state.running) hideOverlay();
+      else showOverlay("暂时停表演", "按空格、点击暂停，或再次输入方向继续。");
+    }
+
+    function endGame() {
+      state.running = false;
+      state.gameOver = true;
+      showOverlay("这局结束", `本局 ${state.score} 分，连击 ${state.combo} 次。右下角已经帮你准备好分享素材。`);
+      syncHud();
+    }
+
+    function update() {
+      state.direction = state.nextDirection;
+      const head = state.snake[0];
+      const nextHead = { x: head.x + state.direction.x, y: head.y + state.direction.y };
+      const hitWall = nextHead.x < 0 || nextHead.y < 0 || nextHead.x >= tileCount || nextHead.y >= tileCount;
+      const hitSelf = state.snake.some((part) => part.x === nextHead.x && part.y === nextHead.y);
+      if (hitWall || hitSelf) return endGame();
+      state.snake.unshift(nextHead);
+      if (nextHead.x === state.food.x && nextHead.y === state.food.y) {
+        spawnParticles(nextHead.x * gridSize + gridSize / 2, nextHead.y * gridSize + gridSize / 2);
+        triggerFlash();
+        state.score += 1;
+        state.combo += 1;
+        state.comboTimer = 12;
+        if (state.score > state.best) {
+          state.best = state.score;
+          state.hasBrokenBest = true;
+          localStorage.setItem(bestKey, String(state.best));
+        }
+        state.speed = Math.max(state.challenge ? 54 : 62, state.speed - 3);
+        placeFood();
+      } else {
+        state.snake.pop();
+        if (state.comboTimer > 0) state.comboTimer -= 1;
+        else state.combo = 0;
+      }
+      syncHud();
+    }
+
+    function drawRoundedRect(x, y, width, height, radius, fillStyle) {
+      ctx.fillStyle = fillStyle;
+      ctx.beginPath();
+      ctx.moveTo(x + radius, y);
+      ctx.arcTo(x + width, y, x + width, y + height, radius);
+      ctx.arcTo(x + width, y + height, x, y + height, radius);
+      ctx.arcTo(x, y + height, x, y, radius);
+      ctx.arcTo(x, y, x + width, y, radius);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    function drawFood() {
+      const x = state.food.x * gridSize;
+      const y = state.food.y * gridSize;
+      const glow = ctx.createRadialGradient(x + 10, y + 10, 2, x + 10, y + 10, 18);
+      glow.addColorStop(0, "rgba(255, 209, 102, 0.95)");
+      glow.addColorStop(1, "rgba(255, 93, 143, 0)");
+      ctx.fillStyle = glow;
+      ctx.fillRect(x - 10, y - 10, 40, 40);
+      drawRoundedRect(x + 3, y + 3, gridSize - 6, gridSize - 6, 8, "#ffd166");
+      drawRoundedRect(x + 6, y + 1, 6, 7, 4, "#4de2c5");
+    }
+
+    function drawSnake() {
+      state.snake.forEach((part, index) => {
+        const x = part.x * gridSize;
+        const y = part.y * gridSize;
+        const gradient = ctx.createLinearGradient(x, y, x + gridSize, y + gridSize);
+        if (index === 0) {
+          gradient.addColorStop(0, "#7ff7d8");
+          gradient.addColorStop(1, state.heatLevel === "Blaze" ? "#ff5d8f" : "#34c4d9");
+        } else {
+          gradient.addColorStop(0, state.heatLevel === "Blaze" ? "#ff8fb0" : "#4de2c5");
+          gradient.addColorStop(1, "#2a6fb3");
+        }
+        drawRoundedRect(x + 1.5, y + 1.5, gridSize - 3, gridSize - 3, 7, gradient);
+        if (index === 0) {
+          ctx.fillStyle = "#081019";
+          ctx.beginPath();
+          ctx.arc(x + 7, y + 8, 2, 0, Math.PI * 2);
+          ctx.arc(x + 13, y + 8, 2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      });
+    }
+
+    function drawParticles() {
+      state.particles = state.particles.filter((item) => item.life > 0);
+      state.particles.forEach((item) => {
+        item.x += item.dx;
+        item.y += item.dy;
+        item.life -= 1;
+        ctx.globalAlpha = Math.max(item.life / 32, 0);
+        ctx.fillStyle = item.life % 2 === 0 ? "#ffd166" : "#ff5d8f";
+        ctx.beginPath();
+        ctx.arc(item.x, item.y, item.size, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      ctx.globalAlpha = 1;
+    }
+
+    function drawTrackGlow() {
+      const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+      gradient.addColorStop(0, "rgba(77, 226, 197, 0.05)");
+      gradient.addColorStop(0.5, state.heatLevel === "Blaze" ? "rgba(255, 93, 143, 0.08)" : "rgba(255, 209, 102, 0.04)");
+      gradient.addColorStop(1, "rgba(52, 110, 186, 0.06)");
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawTrackGlow();
+      drawFood();
+      drawSnake();
+      drawParticles();
+    }
+
+    function loop(timestamp) {
+      if (state.running && timestamp - state.lastTick >= state.speed) {
+        state.lastTick = timestamp;
+        update();
+      }
+      draw();
+      requestAnimationFrame(loop);
+    }
+
+    async function copyShareText() {
+      try {
+        await navigator.clipboard.writeText(shareText.value);
+        shareStatus.textContent = "文案已复制，可以直接去社媒粘贴。";
+      } catch (error) {
+        shareStatus.textContent = "复制失败了，可能是浏览器权限限制，不过文案已经在文本框里。";
+      }
+    }
+
+    async function nativeShare() {
+      const data = { title: "Snake Pop Lab", text: shareText.value, url: window.location.href };
+      if (navigator.share) {
+        try {
+          await navigator.share(data);
+          shareStatus.textContent = "系统分享面板已调用。";
+        } catch (error) {
+          shareStatus.textContent = "你取消了系统分享，文案还在，随时可以继续发。";
+        }
+      } else {
+        shareStatus.textContent = "当前浏览器不支持系统分享，建议使用复制文案或下载海报。";
+      }
+    }
+
+    function wrapText(context, text, x, y, maxWidth, lineHeight) {
+      const lines = text.split("\n");
+      let drawY = y;
+      lines.forEach((line) => {
+        let current = "";
+        line.split("").forEach((char) => {
+          const test = current + char;
+          if (context.measureText(test).width > maxWidth && current) {
+            context.fillText(current, x, drawY);
+            current = char;
+            drawY += lineHeight;
+          } else {
+            current = test;
+          }
+        });
+        if (current) {
+          context.fillText(current, x, drawY);
+          drawY += lineHeight;
+        }
+      });
+    }
+
+    function downloadPoster() {
+      const posterCanvas = document.createElement("canvas");
+      posterCanvas.width = 1080;
+      posterCanvas.height = 1350;
+      const pctx = posterCanvas.getContext("2d");
+      const background = pctx.createLinearGradient(0, 0, 1080, 1350);
+      background.addColorStop(0, "#0b1530");
+      background.addColorStop(0.58, "#101f40");
+      background.addColorStop(1, "#281733");
+      pctx.fillStyle = background;
+      pctx.fillRect(0, 0, 1080, 1350);
+      const glow1 = pctx.createRadialGradient(180, 180, 20, 180, 180, 420);
+      glow1.addColorStop(0, "rgba(77, 226, 197, 0.4)");
+      glow1.addColorStop(1, "rgba(77, 226, 197, 0)");
+      pctx.fillStyle = glow1;
+      pctx.fillRect(0, 0, 1080, 1350);
+      const glow2 = pctx.createRadialGradient(900, 1100, 20, 900, 1100, 480);
+      glow2.addColorStop(0, "rgba(255, 93, 143, 0.34)");
+      glow2.addColorStop(1, "rgba(255, 93, 143, 0)");
+      pctx.fillStyle = glow2;
+      pctx.fillRect(0, 0, 1080, 1350);
+      pctx.fillStyle = "rgba(255,255,255,0.08)";
+      pctx.fillRect(70, 70, 940, 1210);
+      pctx.fillStyle = "#4de2c5";
+      pctx.font = "700 38px Trebuchet MS, Segoe UI, sans-serif";
+      pctx.fillText("Snake Pop Lab", 120, 170);
+      pctx.fillStyle = "#f4f7ff";
+      pctx.font = "800 110px Trebuchet MS, Segoe UI, sans-serif";
+      pctx.fillText("挑战战绩", 120, 300);
+      pctx.fillStyle = "#ffd166";
+      pctx.font = "800 220px Trebuchet MS, Segoe UI, sans-serif";
+      pctx.fillText(String(state.score), 120, 560);
+      pctx.fillStyle = "#a7b4d2";
+      pctx.font = "600 42px Trebuchet MS, Segoe UI, sans-serif";
+      pctx.fillText(`最高分 ${state.best}`, 120, 650);
+      pctx.fillText(`连击 ${state.combo}`, 120, 720);
+      pctx.fillText(`状态 ${state.heatLevel}`, 120, 790);
+      pctx.fillStyle = "#ffffff";
+      pctx.font = "600 48px Trebuchet MS, Segoe UI, sans-serif";
+      wrapText(pctx, shareText.value, 120, 920, 820, 70);
+      pctx.fillStyle = "#a7b4d2";
+      pctx.font = "500 32px Trebuchet MS, Segoe UI, sans-serif";
+      pctx.fillText("打开页面，来一局更燃的贪食蛇挑战。", 120, 1180);
+      const link = document.createElement("a");
+      link.download = "snake-pop-share-poster.png";
+      link.href = posterCanvas.toDataURL("image/png");
+      link.click();
+      shareStatus.textContent = "海报已生成下载，适合发抖音封面图或 Ins Story。";
+    }
+
+    function toggleChallenge() {
+      state.challenge = !state.challenge;
+      localStorage.setItem(challengeKey, state.challenge ? "on" : "off");
+      dailyBtn.textContent = state.challenge ? "挑战模式已开" : "挑战模式";
+      shareStatus.textContent = state.challenge ? "挑战模式已开启，初始速度更快。" : "挑战模式已关闭，恢复普通节奏。";
+      resetGame();
+    }
+
+    document.addEventListener("keydown", (event) => {
+      const key = event.key.toLowerCase();
+      if (key === " " || event.code === "Space") {
+        event.preventDefault();
+        togglePause();
+        return;
+      }
+      const keyMap = { arrowup: "up", w: "up", arrowdown: "down", s: "down", arrowleft: "left", a: "left", arrowright: "right", d: "right" };
+      const dir = keyMap[key];
+      if (dir) {
+        event.preventDefault();
+        setDirection(dir);
+      }
+    });
+
+    startBtn.addEventListener("click", startGame);
+    pauseBtn.addEventListener("click", togglePause);
+    restartBtn.addEventListener("click", resetGame);
+    dailyBtn.addEventListener("click", toggleChallenge);
+    copyBtn.addEventListener("click", copyShareText);
+    nativeShareBtn.addEventListener("click", nativeShare);
+    posterBtn.addEventListener("click", downloadPoster);
+    padButtons.forEach((button) => button.addEventListener("click", () => setDirection(button.dataset.dir)));
+    dailyBtn.textContent = state.challenge ? "挑战模式已开" : "挑战模式";
+    syncHud();
+    resetGame();
+    requestAnimationFrame(loop);
+  </script>
+</body>
+</html>
