@@ -65,34 +65,34 @@
       width: 38vmax;
       height: 38vmax;
       border-radius: 50%;
-      filter: blur(60px);
+      filter: blur(42px);
       pointer-events: none;
-      opacity: 0.35;
+      opacity: 0.18;
       z-index: 0;
     }
 
     body::before {
       top: -12vmax;
       left: -10vmax;
-      background: rgba(121, 247, 212, 0.28);
-      animation: drift 12s ease-in-out infinite alternate;
+      background: rgba(121, 247, 212, 0.16);
+      animation: drift 20s ease-in-out infinite alternate;
     }
 
     body::after {
       right: -8vmax;
       bottom: -12vmax;
-      background: rgba(255, 127, 209, 0.24);
-      animation: drift 15s ease-in-out infinite alternate-reverse;
+      background: rgba(255, 127, 209, 0.14);
+      animation: drift 24s ease-in-out infinite alternate-reverse;
     }
 
     .candy-float {
       position: fixed;
       z-index: 0;
       border-radius: 999px;
-      opacity: 0.75;
+      opacity: 0.38;
       pointer-events: none;
       filter: blur(0.2px);
-      animation: bob 7s ease-in-out infinite alternate;
+      animation: bob 12s ease-in-out infinite alternate;
     }
 
     .candy-float::before {
@@ -375,7 +375,7 @@
       border-radius: 28px;
       overflow: hidden;
       background:
-        radial-gradient(circle at top, rgba(121, 247, 212, 0.12), transparent 24%),
+        radial-gradient(circle at top, rgba(121, 247, 212, 0.08), transparent 20%),
         linear-gradient(180deg, rgba(31, 28, 78, 0.96), rgba(12, 17, 38, 0.98));
       isolation: isolate;
       box-shadow:
@@ -387,11 +387,7 @@
       content: "";
       position: absolute;
       inset: 0;
-      background:
-        radial-gradient(circle at 25% 15%, rgba(77, 226, 197, 0.16), transparent 22%),
-        radial-gradient(circle at 78% 20%, rgba(255, 209, 102, 0.14), transparent 18%),
-        radial-gradient(circle at 50% 80%, rgba(255, 93, 143, 0.12), transparent 22%);
-      mix-blend-mode: screen;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0));
       pointer-events: none;
       z-index: 0;
     }
@@ -402,8 +398,8 @@
       inset: auto 12% -24px 12%;
       height: 38px;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(101, 216, 255, 0.32), rgba(0, 0, 0, 0));
-      filter: blur(18px);
+      background: radial-gradient(circle, rgba(101, 216, 255, 0.16), rgba(0, 0, 0, 0));
+      filter: blur(14px);
       z-index: 0;
       pointer-events: none;
     }
@@ -1504,7 +1500,7 @@
     function drawBoard3D() {
       for (let y = tileCount - 1; y >= 0; y -= 1) {
         for (let x = tileCount - 1; x >= 0; x -= 1) {
-          const tint = (x + y) % 2 === 0 ? "rgba(53, 76, 138, 0.28)" : "rgba(33, 52, 108, 0.22)";
+          const tint = (x + y) % 2 === 0 ? "rgba(50, 70, 120, 0.22)" : "rgba(39, 56, 103, 0.18)";
           drawIsoTile(x, y, tint);
         }
       }
@@ -1567,20 +1563,20 @@
 
     function drawTrackGlow() {
       const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-      gradient.addColorStop(0, "rgba(121, 247, 212, 0.08)");
-      gradient.addColorStop(0.35, "rgba(101, 216, 255, 0.06)");
-      gradient.addColorStop(0.65, state.heatLevel === "Blaze" ? "rgba(255, 127, 209, 0.12)" : "rgba(255, 226, 122, 0.08)");
-      gradient.addColorStop(1, "rgba(168, 139, 255, 0.08)");
+      gradient.addColorStop(0, "rgba(121, 247, 212, 0.04)");
+      gradient.addColorStop(0.42, "rgba(101, 216, 255, 0.03)");
+      gradient.addColorStop(0.7, state.heatLevel === "Blaze" ? "rgba(255, 127, 209, 0.08)" : "rgba(255, 226, 122, 0.04)");
+      gradient.addColorStop(1, "rgba(168, 139, 255, 0.04)");
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       const horizon = ctx.createLinearGradient(0, canvas.height * 0.12, 0, canvas.height * 0.9);
-      horizon.addColorStop(0, "rgba(255,255,255,0.04)");
-      horizon.addColorStop(1, "rgba(0,0,0,0.18)");
+      horizon.addColorStop(0, "rgba(255,255,255,0.025)");
+      horizon.addColorStop(1, "rgba(0,0,0,0.12)");
       ctx.fillStyle = horizon;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      ctx.fillStyle = "rgba(255,255,255,0.03)";
+      ctx.fillStyle = "rgba(255,255,255,0.018)";
       ctx.beginPath();
       ctx.moveTo(isoView.originX, 42);
       ctx.lineTo(canvas.width - 40, isoView.originY + tileCount * 7);
