@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Snake Pop Lab</title>
+  <link rel="icon" type="image/svg+xml" href="./logo-mark.svg" />
   <meta name="description" content="糖果霓虹风贪食蛇小游戏，支持连击音效、战绩海报和社媒快捷分享。" />
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Snake Pop Lab" />
@@ -174,6 +175,36 @@
       gap: 18px;
       border-radius: 28px;
       padding: 24px;
+    }
+
+    .brand-bar {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-bar img {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+    }
+
+    .brand-copy {
+      display: grid;
+      gap: 2px;
+    }
+
+    .brand-name {
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .brand-meta {
+      font-size: 12px;
+      color: var(--muted);
     }
 
     .eyebrow {
@@ -679,6 +710,21 @@
       text-align: center;
     }
 
+    .site-footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding: 0 4px 10px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .site-footer a {
+      color: #fff6a8;
+      text-decoration: none;
+    }
+
     @media (max-width: 980px) {
       .hero,
       .main-grid {
@@ -716,6 +762,13 @@
   <main class="app">
     <section class="hero">
       <div>
+        <div class="brand-bar">
+          <img src="./logo-mark.svg" alt="Snake Pop Lab logo" />
+          <div class="brand-copy">
+            <span class="brand-name">Snake Pop Lab</span>
+            <span class="brand-meta">By zhangxueyou129-dotcom</span>
+          </div>
+        </div>
         <div class="eyebrow">Arcade Promo Ready</div>
         <h1>Snake Pop Lab</h1>
         <p>把经典贪食蛇升级成更有表演感的小作品。节奏会越来越快，连吃会触发热度状态，右侧还能直接生成战绩文案和分享海报，方便你做传播和活动预热。</p>
@@ -866,6 +919,10 @@
       </div>
       <p class="footer-tip">如果后续你要真正接入企业自有分享链路，可以把按钮绑定到你们的 App Scheme、落地页参数或后端发布接口。</p>
     </section>
+    <div class="site-footer">
+      <span>Brand: Snake Pop Lab</span>
+      <span>Author: <a href="https://github.com/zhangxueyou129-dotcom" target="_blank" rel="noreferrer">zhangxueyou129-dotcom</a></span>
+    </div>
   </main>
   <script>
     const canvas = document.getElementById("game");

@@ -1,0 +1,23 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="12" y1="8" x2="112" y2="120" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#79F7D4"/>
+      <stop offset="0.5" stop-color="#65D8FF"/>
+      <stop offset="1" stop-color="#FF7FD1"/>
+    </linearGradient>
+    <linearGradient id="snake" x1="32" y1="26" x2="96" y2="100" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFF6A8"/>
+      <stop offset="1" stop-color="#FFE27A"/>
+    </linearGradient>
+  </defs>
+  <rect x="8" y="8" width="112" height="112" rx="28" fill="url(#bg)"/>
+  <rect x="32" y="26" width="24" height="24" rx="8" fill="url(#snake)"/>
+  <rect x="56" y="26" width="24" height="24" rx="8" fill="url(#snake)"/>
+  <rect x="56" y="50" width="24" height="24" rx="8" fill="url(#snake)"/>
+  <rect x="80" y="50" width="24" height="24" rx="8" fill="url(#snake)"/>
+  <rect x="80" y="74" width="24" height="24" rx="8" fill="url(#snake)"/>
+  <circle cx="66" cy="39" r="2.8" fill="#281447"/>
+  <circle cx="74" cy="39" r="2.8" fill="#281447"/>
+  <circle cx="34" cy="88" r="10" fill="#FFF6A8"/>
+  <path d="M38 76C39.5 71.5 42.5 69 47 68" stroke="#79F7D4" stroke-width="4" stroke-linecap="round"/>
+</svg>
