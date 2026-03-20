@@ -11,6 +11,14 @@
       --muted: rgba(244, 247, 255, 0.68);
       --brand: #4de2c5;
       --brand-2: #ffd166;
+      --brand-3: #ff77c8;
+      --brand-4: #8b7dff;
+      --brand-5: #7fffd4;
+      --candy-blue: #65d8ff;
+      --candy-pink: #ff7fd1;
+      --candy-yellow: #ffe27a;
+      --candy-purple: #a88bff;
+      --candy-mint: #79f7d4;
       --shadow: 0 30px 70px rgba(0, 0, 0, 0.28);
     }
 
@@ -28,10 +36,11 @@
       font-family: "Trebuchet MS", "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
       color: var(--text);
       background:
-        radial-gradient(circle at top left, rgba(77, 226, 197, 0.16), transparent 28%),
-        radial-gradient(circle at 85% 15%, rgba(255, 93, 143, 0.14), transparent 24%),
-        radial-gradient(circle at bottom right, rgba(255, 209, 102, 0.12), transparent 30%),
-        linear-gradient(135deg, #09101d, #141f35 55%, #1d2840);
+        radial-gradient(circle at top left, rgba(121, 247, 212, 0.22), transparent 28%),
+        radial-gradient(circle at 85% 15%, rgba(255, 127, 209, 0.2), transparent 24%),
+        radial-gradient(circle at bottom right, rgba(255, 226, 122, 0.16), transparent 30%),
+        radial-gradient(circle at 55% 45%, rgba(168, 139, 255, 0.14), transparent 28%),
+        linear-gradient(135deg, #120f2d, #16264d 48%, #3a1b56);
       padding: 22px;
       overflow-x: hidden;
     }
@@ -52,15 +61,62 @@
     body::before {
       top: -12vmax;
       left: -10vmax;
-      background: rgba(77, 226, 197, 0.18);
+      background: rgba(121, 247, 212, 0.28);
       animation: drift 12s ease-in-out infinite alternate;
     }
 
     body::after {
       right: -8vmax;
       bottom: -12vmax;
-      background: rgba(255, 93, 143, 0.15);
+      background: rgba(255, 127, 209, 0.24);
       animation: drift 15s ease-in-out infinite alternate-reverse;
+    }
+
+    .candy-float {
+      position: fixed;
+      z-index: 0;
+      border-radius: 999px;
+      opacity: 0.75;
+      pointer-events: none;
+      filter: blur(0.2px);
+      animation: bob 7s ease-in-out infinite alternate;
+    }
+
+    .candy-float::before {
+      content: "";
+      position: absolute;
+      inset: 6%;
+      border-radius: inherit;
+      border: 2px solid rgba(255, 255, 255, 0.24);
+    }
+
+    .candy-a {
+      top: 120px;
+      right: 8vw;
+      width: 76px;
+      height: 76px;
+      background: linear-gradient(135deg, var(--candy-yellow), var(--candy-pink));
+      box-shadow: 0 0 28px rgba(255, 127, 209, 0.35);
+    }
+
+    .candy-b {
+      top: 52vh;
+      left: 4vw;
+      width: 54px;
+      height: 120px;
+      background: linear-gradient(180deg, var(--candy-blue), var(--candy-purple));
+      transform: rotate(-24deg);
+      box-shadow: 0 0 30px rgba(101, 216, 255, 0.28);
+    }
+
+    .candy-c {
+      bottom: 54px;
+      right: 22vw;
+      width: 120px;
+      height: 52px;
+      background: linear-gradient(135deg, var(--candy-mint), var(--candy-yellow));
+      transform: rotate(20deg);
+      box-shadow: 0 0 28px rgba(121, 247, 212, 0.28);
     }
 
     @keyframes drift {
@@ -69,6 +125,15 @@
       }
       to {
         transform: translate3d(2vmax, 1.5vmax, 0) scale(1.08);
+      }
+    }
+
+    @keyframes bob {
+      from {
+        transform: translateY(0) rotate(-10deg);
+      }
+      to {
+        transform: translateY(12px) rotate(8deg);
       }
     }
 
@@ -86,7 +151,7 @@
     .side-card,
     .share-card {
       border: 1px solid var(--line);
-      background: rgba(10, 16, 31, 0.68);
+      background: linear-gradient(180deg, rgba(19, 21, 54, 0.78), rgba(28, 24, 64, 0.72));
       backdrop-filter: blur(18px);
       box-shadow: var(--shadow);
     }
@@ -106,11 +171,12 @@
       font-size: 12px;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: var(--brand);
-      background: rgba(77, 226, 197, 0.1);
-      border: 1px solid rgba(77, 226, 197, 0.18);
+      color: #fff8a6;
+      background: linear-gradient(135deg, rgba(255, 226, 122, 0.16), rgba(255, 127, 209, 0.16));
+      border: 1px solid rgba(255, 255, 255, 0.18);
       border-radius: 999px;
       padding: 8px 12px;
+      box-shadow: inset 0 0 18px rgba(255, 255, 255, 0.05);
     }
 
     .hero h1 {
@@ -138,8 +204,8 @@
     .hero-stat,
     .mini-card {
       border-radius: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
       padding: 16px;
     }
 
@@ -167,7 +233,7 @@
       border-radius: 24px;
       padding: 18px;
       background:
-        linear-gradient(145deg, rgba(77, 226, 197, 0.12), rgba(255, 93, 143, 0.08)),
+        linear-gradient(145deg, rgba(121, 247, 212, 0.18), rgba(255, 127, 209, 0.12)),
         rgba(255, 255, 255, 0.04);
       border: 1px solid rgba(255, 255, 255, 0.08);
     }
@@ -194,7 +260,7 @@
       border-radius: 999px;
       font-size: 12px;
       color: #fff;
-      background: rgba(255, 255, 255, 0.08);
+      background: linear-gradient(135deg, rgba(101, 216, 255, 0.2), rgba(255, 127, 209, 0.22));
       border: 1px solid rgba(255, 255, 255, 0.08);
     }
 
@@ -240,9 +306,10 @@
       min-width: 92px;
       padding: 11px 14px;
       border-radius: 18px;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.07);
+      background: linear-gradient(145deg, rgba(101, 216, 255, 0.12), rgba(255, 127, 209, 0.14));
+      border: 1px solid rgba(255, 255, 255, 0.12);
       text-align: center;
+      box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.03);
     }
 
     .stat-label {
@@ -267,7 +334,7 @@
       background:
         linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-        linear-gradient(180deg, rgba(22, 31, 52, 0.9), rgba(10, 16, 30, 0.96));
+        linear-gradient(180deg, rgba(35, 28, 78, 0.92), rgba(17, 22, 48, 0.98));
       background-size: 5% 5%, 5% 5%, 100% 100%;
       isolation: isolate;
     }
@@ -378,8 +445,8 @@
     .panel {
       padding: 16px;
       border-radius: 22px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.04));
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .panel p,
@@ -431,21 +498,21 @@
     }
 
     .primary {
-      background: linear-gradient(135deg, #4de2c5, #2bb6d6);
-      color: #071019;
+      background: linear-gradient(135deg, var(--candy-yellow), var(--candy-pink));
+      color: #3a1748;
     }
 
     .secondary {
-      background: rgba(255, 255, 255, 0.08);
+      background: linear-gradient(135deg, rgba(101, 216, 255, 0.2), rgba(168, 139, 255, 0.2));
       border: 1px solid rgba(255, 255, 255, 0.09);
     }
 
     .danger {
-      background: linear-gradient(135deg, rgba(255, 93, 143, 0.95), rgba(255, 120, 98, 0.95));
+      background: linear-gradient(135deg, rgba(255, 119, 200, 0.95), rgba(255, 154, 117, 0.95));
     }
 
     .special {
-      background: linear-gradient(135deg, rgba(255, 209, 102, 0.95), rgba(255, 93, 143, 0.95));
+      background: linear-gradient(135deg, rgba(121, 247, 212, 0.95), rgba(139, 125, 255, 0.95));
     }
 
     .pad {
@@ -475,8 +542,8 @@
     .mission {
       padding: 14px;
       border-radius: 18px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .mission strong {
@@ -510,10 +577,30 @@
     }
 
     .social-grid .link-button {
-      background: rgba(255, 255, 255, 0.07);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: linear-gradient(135deg, rgba(101, 216, 255, 0.16), rgba(255, 127, 209, 0.18));
+      border: 1px solid rgba(255, 255, 255, 0.1);
       font-size: 13px;
       padding: 12px 10px;
+    }
+
+    .social-grid .link-button[data-platform="douyin"] {
+      background: linear-gradient(135deg, rgba(0, 230, 255, 0.24), rgba(255, 53, 120, 0.24));
+    }
+
+    .social-grid .link-button[data-platform="instagram"] {
+      background: linear-gradient(135deg, rgba(255, 215, 82, 0.24), rgba(254, 68, 146, 0.24), rgba(126, 91, 255, 0.24));
+    }
+
+    .social-grid .link-button[data-platform="x"] {
+      background: linear-gradient(135deg, rgba(140, 179, 255, 0.22), rgba(89, 222, 255, 0.2));
+    }
+
+    .social-grid .link-button[data-platform="facebook"] {
+      background: linear-gradient(135deg, rgba(89, 154, 255, 0.28), rgba(116, 203, 255, 0.22));
+    }
+
+    .social-grid .link-button[data-platform="telegram"] {
+      background: linear-gradient(135deg, rgba(94, 203, 255, 0.24), rgba(147, 240, 255, 0.18));
     }
 
     .share-preview {
@@ -522,7 +609,7 @@
       border-radius: 24px;
       background:
         radial-gradient(circle at top, rgba(77, 226, 197, 0.2), transparent 34%),
-        linear-gradient(165deg, #0c1730, #101e3d 56%, #241735);
+        linear-gradient(165deg, #25154a, #142b59 56%, #5a235f);
       border: 1px solid rgba(255, 255, 255, 0.08);
       padding: 18px;
       display: grid;
@@ -557,9 +644,21 @@
     .poster-pill {
       padding: 8px 12px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.08);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.04));
       color: var(--muted);
       font-size: 12px;
+    }
+
+    .share-shortcuts {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .share-shortcuts button {
+      padding: 12px;
+      font-size: 13px;
     }
 
     .footer-tip {
@@ -599,6 +698,9 @@
   </style>
 </head>
 <body>
+  <div class="candy-float candy-a"></div>
+  <div class="candy-float candy-b"></div>
+  <div class="candy-float candy-c"></div>
   <main class="app">
     <section class="hero">
       <div>
@@ -709,19 +811,27 @@
           <textarea id="shareText" spellcheck="false"></textarea>
           <div class="share-actions">
             <button id="copyBtn" class="primary">复制战绩文案</button>
-            <button id="nativeShareBtn" class="secondary">调用系统分享</button>
+            <button id="nativeShareBtn" class="secondary">系统一键分享</button>
             <button id="posterBtn" class="special">下载分享海报</button>
+          </div>
+          <div class="share-shortcuts">
+            <button id="douyinQuickBtn" class="secondary">复制并打开抖音</button>
+            <button id="insQuickBtn" class="secondary">复制并打开 Ins</button>
+            <button id="xQuickBtn" class="secondary">转发到 X</button>
+            <button id="telegramQuickBtn" class="secondary">转发到 Telegram</button>
           </div>
           <p id="shareStatus" class="share-note">当前会根据分数、最高分和连击自动生成文案。</p>
         </section>
         <section class="panel">
           <h3 class="panel-title">社媒快捷入口</h3>
           <div class="social-grid">
-            <a id="douyinLink" class="link-button" href="https://www.douyin.com/" target="_blank" rel="noreferrer">打开抖音</a>
-            <a id="insLink" class="link-button" href="https://www.instagram.com/" target="_blank" rel="noreferrer">打开 Ins</a>
-            <a id="xLink" class="link-button" href="https://twitter.com/intent/tweet" target="_blank" rel="noreferrer">打开 X</a>
+            <a id="douyinLink" class="link-button" data-platform="douyin" href="https://www.douyin.com/" target="_blank" rel="noreferrer">打开抖音</a>
+            <a id="insLink" class="link-button" data-platform="instagram" href="https://www.instagram.com/" target="_blank" rel="noreferrer">打开 Ins</a>
+            <a id="xLink" class="link-button" data-platform="x" href="https://twitter.com/intent/tweet" target="_blank" rel="noreferrer">打开 X</a>
+            <a id="facebookLink" class="link-button" data-platform="facebook" href="https://www.facebook.com/sharer/sharer.php" target="_blank" rel="noreferrer">打开 Facebook</a>
+            <a id="telegramLink" class="link-button" data-platform="telegram" href="https://t.me/share/url" target="_blank" rel="noreferrer">打开 Telegram</a>
           </div>
-          <p class="share-note">网页前端没法直接替你完成抖音或 Instagram 的正式发帖鉴权流程，所以这里采用更现实的推广流：复制文案、下载海报、快捷打开平台。</p>
+          <p class="share-note">X、Facebook、Telegram 支持带文案的分享链接。抖音和 Instagram 仍然受平台限制，所以这里做成复制文案后自动打开平台。</p>
         </section>
         <section class="panel">
           <h3 class="panel-title">海报预览</h3>
@@ -773,9 +883,15 @@
     const copyBtn = document.getElementById("copyBtn");
     const nativeShareBtn = document.getElementById("nativeShareBtn");
     const posterBtn = document.getElementById("posterBtn");
+    const douyinQuickBtn = document.getElementById("douyinQuickBtn");
+    const insQuickBtn = document.getElementById("insQuickBtn");
+    const xQuickBtn = document.getElementById("xQuickBtn");
+    const telegramQuickBtn = document.getElementById("telegramQuickBtn");
     const douyinLink = document.getElementById("douyinLink");
     const insLink = document.getElementById("insLink");
     const xLink = document.getElementById("xLink");
+    const facebookLink = document.getElementById("facebookLink");
+    const telegramLink = document.getElementById("telegramLink");
     const posterScore = document.getElementById("posterScore");
     const posterBest = document.getElementById("posterBest");
     const posterCombo = document.getElementById("posterCombo");
@@ -873,7 +989,11 @@
     }
 
     function syncShareLinks(copy) {
-      xLink.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(copy)}`;
+      const encodedText = encodeURIComponent(copy);
+      const encodedUrl = encodeURIComponent(window.location.href);
+      xLink.href = `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`;
+      facebookLink.href = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${encodedText}`;
+      telegramLink.href = `https://t.me/share/url?url=${encodedUrl}&text=${encodedText}`;
       douyinLink.href = "https://www.douyin.com/";
       insLink.href = "https://www.instagram.com/";
     }
@@ -1026,9 +1146,10 @@
 
     function drawTrackGlow() {
       const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-      gradient.addColorStop(0, "rgba(77, 226, 197, 0.05)");
-      gradient.addColorStop(0.5, state.heatLevel === "Blaze" ? "rgba(255, 93, 143, 0.08)" : "rgba(255, 209, 102, 0.04)");
-      gradient.addColorStop(1, "rgba(52, 110, 186, 0.06)");
+      gradient.addColorStop(0, "rgba(121, 247, 212, 0.08)");
+      gradient.addColorStop(0.35, "rgba(101, 216, 255, 0.06)");
+      gradient.addColorStop(0.65, state.heatLevel === "Blaze" ? "rgba(255, 127, 209, 0.12)" : "rgba(255, 226, 122, 0.08)");
+      gradient.addColorStop(1, "rgba(168, 139, 255, 0.08)");
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
@@ -1057,6 +1178,21 @@
       } catch (error) {
         shareStatus.textContent = "复制失败了，可能是浏览器权限限制，不过文案已经在文本框里。";
       }
+    }
+
+    async function copyThenOpen(url, successText) {
+      try {
+        await navigator.clipboard.writeText(shareText.value);
+        shareStatus.textContent = successText;
+      } catch (error) {
+        shareStatus.textContent = "文案复制失败了，我还是先帮你打开平台。";
+      }
+      window.open(url, "_blank", "noopener");
+    }
+
+    function openShareWindow(url, message) {
+      window.open(url, "_blank", "noopener");
+      shareStatus.textContent = message;
     }
 
     async function nativeShare() {
@@ -1175,6 +1311,10 @@
     copyBtn.addEventListener("click", copyShareText);
     nativeShareBtn.addEventListener("click", nativeShare);
     posterBtn.addEventListener("click", downloadPoster);
+    douyinQuickBtn.addEventListener("click", () => copyThenOpen(douyinLink.href, "文案已复制，并帮你打开抖音。"));
+    insQuickBtn.addEventListener("click", () => copyThenOpen(insLink.href, "文案已复制，并帮你打开 Instagram。"));
+    xQuickBtn.addEventListener("click", () => openShareWindow(xLink.href, "已打开 X 转发窗口。"));
+    telegramQuickBtn.addEventListener("click", () => openShareWindow(telegramLink.href, "已打开 Telegram 转发窗口。"));
     padButtons.forEach((button) => button.addEventListener("click", () => setDirection(button.dataset.dir)));
     dailyBtn.textContent = state.challenge ? "挑战模式已开" : "挑战模式";
     syncHud();
