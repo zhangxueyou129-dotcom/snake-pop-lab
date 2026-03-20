@@ -374,13 +374,9 @@
       width: 100%;
       border-radius: 28px;
       overflow: hidden;
-      transform: perspective(1200px) rotateX(8deg);
-      transform-origin: center top;
       background:
-        linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-        linear-gradient(180deg, rgba(35, 28, 78, 0.92), rgba(17, 22, 48, 0.98));
-      background-size: 5% 5%, 5% 5%, 100% 100%;
+        radial-gradient(circle at top, rgba(121, 247, 212, 0.12), transparent 24%),
+        linear-gradient(180deg, rgba(31, 28, 78, 0.96), rgba(12, 17, 38, 0.98));
       isolation: isolate;
       box-shadow:
         inset 0 -30px 60px rgba(0, 0, 0, 0.22),
@@ -1389,7 +1385,8 @@
       if (hitWall || hitSelf) return endGame();
       state.snake.unshift(nextHead);
       if (nextHead.x === state.food.x && nextHead.y === state.food.y) {
-        spawnParticles(nextHead.x * gridSize + gridSize / 2, nextHead.y * gridSize + gridSize / 2);
+        const burstPoint = projectIso(nextHead.x + 0.5, nextHead.y + 0.5, 1.1);
+        spawnParticles(burstPoint.x, burstPoint.y);
         triggerFlash();
         state.score += 1;
         state.combo += 1;
@@ -1422,72 +1419,132 @@
       ctx.fill();
     }
 
-    function drawBlock3D(x, y, size, topFill, sideFill, glowColor) {
-      const depth = 5;
-      if (glowColor) {
-        ctx.shadowColor = glowColor;
-        ctx.shadowBlur = 22;
+    const isoView = {
+      originX: canvas.width / 2,
+      originY: 120,
+      tileW: 28,
+      tileH: 14,
+      cubeH: 18
+    };
+
+    function projectIso(x, y, z = 0) {
+      return {
+        x: isoView.originX + (x - y) * (isoView.tileW / 2),
+        y: isoView.originY + (x + y) * (isoView.tileH / 2) - z * isoView.cubeH
+      };
+    }
+
+    function drawIsoFace(points, fillStyle, strokeStyle = "rgba(255,255,255,0.06)") {
+      ctx.beginPath();
+      ctx.moveTo(points[0].x, points[0].y);
+      for (let i = 1; i < points.length; i += 1) {
+        ctx.lineTo(points[i].x, points[i].y);
       }
-      drawRoundedRect(x + 1, y + 1, size - 2, size - 2, 7, topFill);
+      ctx.closePath();
+      ctx.fillStyle = fillStyle;
+      ctx.fill();
+      ctx.strokeStyle = strokeStyle;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+
+    function drawIsoTile(x, y, fillStyle, glow = null) {
+      const p1 = projectIso(x, y, 0);
+      const p2 = projectIso(x + 1, y, 0);
+      const p3 = projectIso(x + 1, y + 1, 0);
+      const p4 = projectIso(x, y + 1, 0);
+      if (glow) {
+        ctx.shadowColor = glow;
+        ctx.shadowBlur = 14;
+      }
+      drawIsoFace([p1, p2, p3, p4], fillStyle, "rgba(255,255,255,0.04)");
       ctx.shadowBlur = 0;
+    }
 
-      ctx.fillStyle = sideFill;
+    function drawIsoCube(x, y, height, colors, glow = null) {
+      const baseA = projectIso(x, y, 0);
+      const baseB = projectIso(x + 1, y, 0);
+      const baseC = projectIso(x + 1, y + 1, 0);
+      const baseD = projectIso(x, y + 1, 0);
+      const topA = projectIso(x, y, height);
+      const topB = projectIso(x + 1, y, height);
+      const topC = projectIso(x + 1, y + 1, height);
+      const topD = projectIso(x, y + 1, height);
+
+      if (glow) {
+        ctx.shadowColor = glow;
+        ctx.shadowBlur = 26;
+      }
+      drawIsoFace([topA, topB, topC, topD], colors.top, "rgba(255,255,255,0.12)");
+      ctx.shadowBlur = 0;
+      drawIsoFace([topB, baseB, baseC, topC], colors.right, "rgba(0,0,0,0.16)");
+      drawIsoFace([topD, topC, baseC, baseD], colors.left, "rgba(0,0,0,0.16)");
+
+      ctx.strokeStyle = "rgba(255,255,255,0.2)";
+      ctx.lineWidth = 1.1;
       ctx.beginPath();
-      ctx.moveTo(x + size - 5, y + 7);
-      ctx.lineTo(x + size + depth, y + depth);
-      ctx.lineTo(x + size + depth, y + size - 2);
-      ctx.lineTo(x + size - 5, y + size - 6);
-      ctx.closePath();
-      ctx.fill();
+      ctx.moveTo(topA.x, topA.y);
+      ctx.lineTo(topB.x, topB.y);
+      ctx.lineTo(topC.x, topC.y);
+      ctx.stroke();
+    }
 
+    function drawIsoShadow(x, y, scale = 1, alpha = 0.22) {
+      const center = projectIso(x + 0.5, y + 0.5, 0);
+      ctx.save();
+      ctx.translate(center.x, center.y + 8);
+      ctx.scale(scale, 0.42);
+      ctx.fillStyle = `rgba(8, 10, 24, ${alpha})`;
       ctx.beginPath();
-      ctx.moveTo(x + 6, y + size - 5);
-      ctx.lineTo(x + size - 6, y + size - 5);
-      ctx.lineTo(x + size + depth, y + size - 1);
-      ctx.lineTo(x + depth, y + size + depth);
-      ctx.closePath();
+      ctx.arc(0, 0, 22, 0, Math.PI * 2);
       ctx.fill();
+      ctx.restore();
+    }
 
-      ctx.fillStyle = "rgba(255,255,255,0.22)";
-      ctx.fillRect(x + 4, y + 4, size - 10, 3);
+    function drawBoard3D() {
+      for (let y = tileCount - 1; y >= 0; y -= 1) {
+        for (let x = tileCount - 1; x >= 0; x -= 1) {
+          const tint = (x + y) % 2 === 0 ? "rgba(53, 76, 138, 0.28)" : "rgba(33, 52, 108, 0.22)";
+          drawIsoTile(x, y, tint);
+        }
+      }
     }
 
     function drawFood() {
-      const x = state.food.x * gridSize;
-      const y = state.food.y * gridSize;
-      const glow = ctx.createRadialGradient(x + 10, y + 10, 2, x + 10, y + 10, 18);
-      glow.addColorStop(0, "rgba(255, 209, 102, 0.95)");
-      glow.addColorStop(1, "rgba(255, 93, 143, 0)");
-      ctx.fillStyle = glow;
-      ctx.fillRect(x - 10, y - 10, 40, 40);
-      drawBlock3D(x + 2, y + 2, gridSize - 4, "#ffd166", "#ff9dc8", "rgba(255, 226, 122, 0.7)");
-      drawRoundedRect(x + 6, y + 1, 7, 8, 4, "#7fffd4");
-      drawRoundedRect(x + 9, y - 1, 3, 6, 3, "#8b7dff");
+      drawIsoShadow(state.food.x, state.food.y, 0.85, 0.28);
+      drawIsoCube(state.food.x, state.food.y, 0.9, {
+        top: "#ffe27a",
+        right: "#ff91cb",
+        left: "#f5b14d"
+      }, "rgba(255, 226, 122, 0.7)");
+
+      const stemBase = projectIso(state.food.x + 0.52, state.food.y + 0.42, 1.1);
+      ctx.strokeStyle = "#7fffd4";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(stemBase.x, stemBase.y);
+      ctx.quadraticCurveTo(stemBase.x + 6, stemBase.y - 8, stemBase.x + 1, stemBase.y - 14);
+      ctx.stroke();
     }
 
     function drawSnake() {
-      state.snake.forEach((part, index) => {
-        const x = part.x * gridSize;
-        const y = part.y * gridSize;
-        const gradient = ctx.createLinearGradient(x, y, x + gridSize, y + gridSize);
-        const sideGradient = ctx.createLinearGradient(x, y, x + gridSize + 5, y + gridSize + 5);
+      const ordered = [...state.snake].sort((a, b) => (a.x + a.y) - (b.x + b.y));
+      ordered.forEach((part) => {
+        const index = state.snake.findIndex((node) => node.x === part.x && node.y === part.y);
+        drawIsoShadow(part.x, part.y, index === 0 ? 0.95 : 0.85, index === 0 ? 0.28 : 0.18);
+        drawIsoCube(part.x, part.y, 1, {
+          top: index === 0 ? (state.heatLevel === "Blaze" ? "#ff8cc8" : "#8affef") : (state.heatLevel === "Blaze" ? "#ff72ae" : "#65d8ff"),
+          right: index === 0 ? "#4064d6" : "#274fa7",
+          left: index === 0 ? (state.heatLevel === "Blaze" ? "#d94887" : "#44c2d9") : "#1f3d82"
+        }, index === 0 ? "rgba(121, 247, 212, 0.8)" : "rgba(101, 216, 255, 0.45)");
+
         if (index === 0) {
-          gradient.addColorStop(0, "#7ff7d8");
-          gradient.addColorStop(1, state.heatLevel === "Blaze" ? "#ff5d8f" : "#34c4d9");
-          sideGradient.addColorStop(0, "#2f98c8");
-          sideGradient.addColorStop(1, state.heatLevel === "Blaze" ? "#cb3c84" : "#24579f");
-        } else {
-          gradient.addColorStop(0, state.heatLevel === "Blaze" ? "#ff8fb0" : "#4de2c5");
-          gradient.addColorStop(1, "#2a6fb3");
-          sideGradient.addColorStop(0, state.heatLevel === "Blaze" ? "#d95b91" : "#2d5d9d");
-          sideGradient.addColorStop(1, "#193b73");
-        }
-        drawBlock3D(x + 1.5, y + 1.5, gridSize - 3, gradient, sideGradient, index === 0 ? "rgba(121,247,212,0.75)" : "rgba(101,216,255,0.45)");
-        if (index === 0) {
-          ctx.fillStyle = "#081019";
+          const eyeL = projectIso(part.x + 0.33, part.y + 0.3, 1.05);
+          const eyeR = projectIso(part.x + 0.58, part.y + 0.3, 1.05);
+          ctx.fillStyle = "#0c1430";
           ctx.beginPath();
-          ctx.arc(x + 7, y + 8, 2, 0, Math.PI * 2);
-          ctx.arc(x + 13, y + 8, 2, 0, Math.PI * 2);
+          ctx.arc(eyeL.x, eyeL.y, 2.6, 0, Math.PI * 2);
+          ctx.arc(eyeR.x, eyeR.y, 2.6, 0, Math.PI * 2);
           ctx.fill();
         }
       });
@@ -1522,11 +1579,21 @@
       horizon.addColorStop(1, "rgba(0,0,0,0.18)");
       ctx.fillStyle = horizon;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = "rgba(255,255,255,0.03)";
+      ctx.beginPath();
+      ctx.moveTo(isoView.originX, 42);
+      ctx.lineTo(canvas.width - 40, isoView.originY + tileCount * 7);
+      ctx.lineTo(isoView.originX, canvas.height - 34);
+      ctx.lineTo(40, isoView.originY + tileCount * 7);
+      ctx.closePath();
+      ctx.fill();
     }
 
     function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       drawTrackGlow();
+      drawBoard3D();
       drawFood();
       drawSnake();
       drawParticles();
