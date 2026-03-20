@@ -1,0 +1,91 @@
+<svg width="1280" height="640" viewBox="0 0 1280 640" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="96" y1="44" x2="1122" y2="604" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1A1740"/>
+      <stop offset="0.48" stop-color="#1A3266"/>
+      <stop offset="1" stop-color="#58215B"/>
+    </linearGradient>
+    <radialGradient id="glowA" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(220 100) rotate(38) scale(332 264)">
+      <stop stop-color="#79F7D4" stop-opacity="0.72"/>
+      <stop offset="1" stop-color="#79F7D4" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowB" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1124 130) rotate(152) scale(362 220)">
+      <stop stop-color="#FF7FD1" stop-opacity="0.68"/>
+      <stop offset="1" stop-color="#FF7FD1" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowC" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(894 520) rotate(160) scale(344 200)">
+      <stop stop-color="#FFE27A" stop-opacity="0.52"/>
+      <stop offset="1" stop-color="#FFE27A" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="pill" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#65D8FF"/>
+      <stop offset="1" stop-color="#FF7FD1"/>
+    </linearGradient>
+    <linearGradient id="snake" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#7FFFD4"/>
+      <stop offset="1" stop-color="#8B7DFF"/>
+    </linearGradient>
+    <filter id="blur" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="22"/>
+    </filter>
+  </defs>
+
+  <rect width="1280" height="640" rx="36" fill="url(#bg)"/>
+  <rect x="18" y="18" width="1244" height="604" rx="28" stroke="rgba(255,255,255,0.14)" stroke-width="2"/>
+  <ellipse cx="220" cy="100" rx="250" ry="200" fill="url(#glowA)"/>
+  <ellipse cx="1124" cy="130" rx="290" ry="180" fill="url(#glowB)"/>
+  <ellipse cx="894" cy="520" rx="260" ry="170" fill="url(#glowC)"/>
+
+  <g opacity="0.82">
+    <rect x="72" y="64" width="182" height="48" rx="24" fill="url(#pill)"/>
+    <text x="110" y="95" fill="#FFFBE8" font-family="Trebuchet MS, Segoe UI, sans-serif" font-size="22" font-weight="700" letter-spacing="2">ARCADE SHARE READY</text>
+  </g>
+
+  <text x="76" y="222" fill="white" font-family="Trebuchet MS, Segoe UI, sans-serif" font-size="108" font-weight="800" letter-spacing="-4">Snake Pop Lab</text>
+  <text x="82" y="286" fill="#CED8FF" font-family="Trebuchet MS, Segoe UI, sans-serif" font-size="30" font-weight="500">糖果霓虹风贪食蛇，带连击音效、战绩海报和社媒快捷分享。</text>
+
+  <g opacity="0.92">
+    <rect x="80" y="354" width="178" height="94" rx="24" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.12)"/>
+    <text x="114" y="390" fill="#C8D4F8" font-family="Trebuchet MS, Segoe UI, sans-serif" font-size="22">试玩地址</text>
+    <text x="114" y="428" fill="#FFE27A" font-family="Trebuchet MS, Segoe UI, sans-serif" font-size="38" font-weight="800">LIVE</text>
+  </g>
+  <g opacity="0.92">
+    <rect x="278" y="354" width="178" height="94" rx="24" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.12)"/>
+    <text x="313" y="390" fill="#C8D4F8" font-family="Trebuchet MS, Segoe UI, sans-serif" font-size="22">分享方式</text>
+    <text x="313" y="428" fill="#79F7D4" font-family="Trebuchet MS, Segoe UI, sans-serif" font-size="38" font-weight="800">SOCIAL</text>
+  </g>
+  <g opacity="0.92">
+    <rect x="476" y="354" width="178" height="94" rx="24" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.12)"/>
+    <text x="510" y="390" fill="#C8D4F8" font-family="Trebuchet MS, Segoe UI, sans-serif" font-size="22">音效反馈</text>
+    <text x="510" y="428" fill="#FF7FD1" font-family="Trebuchet MS, Segoe UI, sans-serif" font-size="38" font-weight="800">COMBO</text>
+  </g>
+
+  <g transform="translate(820 116)">
+    <rect x="0" y="0" width="360" height="400" rx="34" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.12)"/>
+    <rect x="30" y="30" width="300" height="300" rx="28" fill="rgba(10,16,31,0.72)" stroke="rgba(255,255,255,0.08)"/>
+    <g opacity="0.56">
+      <path d="M30 90H330" stroke="rgba(255,255,255,0.08)" />
+      <path d="M30 150H330" stroke="rgba(255,255,255,0.08)" />
+      <path d="M30 210H330" stroke="rgba(255,255,255,0.08)" />
+      <path d="M30 270H330" stroke="rgba(255,255,255,0.08)" />
+      <path d="M90 30V330" stroke="rgba(255,255,255,0.08)" />
+      <path d="M150 30V330" stroke="rgba(255,255,255,0.08)" />
+      <path d="M210 30V330" stroke="rgba(255,255,255,0.08)" />
+      <path d="M270 30V330" stroke="rgba(255,255,255,0.08)" />
+    </g>
+    <g filter="url(#blur)" opacity="0.75">
+      <circle cx="234" cy="112" r="30" fill="#FFE27A"/>
+    </g>
+    <circle cx="234" cy="112" r="16" fill="#FFE27A"/>
+    <rect x="166" y="94" width="52" height="52" rx="16" fill="url(#snake)"/>
+    <rect x="114" y="94" width="52" height="52" rx="16" fill="url(#snake)"/>
+    <rect x="114" y="146" width="52" height="52" rx="16" fill="url(#snake)"/>
+    <rect x="166" y="146" width="52" height="52" rx="16" fill="url(#snake)"/>
+    <rect x="218" y="146" width="52" height="52" rx="16" fill="url(#snake)"/>
+    <circle cx="182" cy="112" r="3.5" fill="#0B1330"/>
+    <circle cx="200" cy="112" r="3.5" fill="#0B1330"/>
+
+    <text x="34" y="372" fill="#FFFFFF" font-family="Trebuchet MS, Segoe UI, sans-serif" font-size="22" font-weight="700">试玩：</text>
+    <text x="98" y="372" fill="#79F7D4" font-family="Trebuchet MS, Segoe UI, sans-serif" font-size="22">zhangxueyou129-dotcom.github.io/snake-pop-lab</text>
+  </g>
+</svg>
